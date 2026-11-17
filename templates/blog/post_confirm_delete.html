@@ -1,0 +1,13 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <div class="card" style="max-width: 500px; margin: 60px auto; text-align: center; padding: 40px;">
+        <h2 style="color: var(--accent-pink); margin-bottom: 20px;">Confirm Delete</h2>
+        <p style="margin-bottom: 30px; color: var(--text-muted); line-height: 1.6;">Are you sure you want to delete the post?</p>
+        <form method="post" style="display: flex; justify-content: center; gap: 15px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+            <a href="{% url 'blog:post_list' %}" class="btn btn-outline">Cancel</a>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 30px auto;">
+    <div class="card" style="padding: 45px;">
+        <h2 style="font-size: 2rem; margin-bottom: 25px; color: var(--text-heading);">{{ title }}</h2>
+        
+        {% if form.errors %}
+            <div style="background: rgba(255, 75, 75, 0.1); border: 1px solid rgba(255, 75, 75, 0.3); padding: 14px 18px; border-radius: var(--radius-md); margin-bottom: 25px; color: #ff4b4b; font-size: 0.9rem;">
+                Error filling out the form. Your entered data has been saved below — please correct the highlighted fields.
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-heading); font-size: 0.9rem; font-weight: 500;">Title</label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-heading); font-size: 0.9rem; font-weight: 500;">Category</label>
+                {{ form.category }}
+                {{ form.category.errors }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-heading); font-size: 0.9rem; font-weight: 500;">Image</label>
+                {{ form.image }}
+                {{ form.image.errors }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-heading); font-size: 0.9rem; font-weight: 500;">Tags</label>
+
+                <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 15px;">
+                    <!-- Поле живого пошуку тегів -->
+                    <input type="text" id="tag-search" placeholder="🔍 Quick tag search..." class="form-input" style="width: 100%; margin-bottom: 12px; padding: 8px 12px; font-size: 0.85rem; background: rgba(10, 12, 16, 0.6); border: 1px solid var(--border-color); border-radius: 6px; color: #fff; outline: none;">
+                    
+                    <!-- Список чекбоксів із прокруткою -->
+                    <div id="tags-list" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+                        {{ form.tags }}
+                    </div>
+                </div>
+                {{ form.tags.errors }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 35px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-heading); font-size: 0.9rem; font-weight: 500;">Content</label>
+                {{ form.content }}
+                {{ form.content.errors }}
+            </div>
+
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button type="submit" class="btn btn-primary" style="padding: 14px 30px; font-size: 0.95rem;">Save Publication</button>
+                <a href="{% url 'blog:post_list' %}" class="btn btn-outline" style="padding: 14px 26px; font-size: 0.95rem;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('tag-search').addEventListener('input', function() {
+        let filter = this.value.toLowerCase().trim();
+        
+        let items = document.querySelectorAll('#tags-list div, #tags-list label');
+        
+        items.forEach(function(item) {
+            let text = item.textContent.toLowerCase();
+            
+            // Якщо рядок містить текст або обгортка не порожня — фільтруємо
+            if (text.includes(filter)) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    });
+</script>
+
+<style>
+#tags-list input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--bg-input, #1a1e29);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+#tags-list input[type="checkbox"]:hover {
+    border-color: var(--accent-main, #00f2fe);
+}
+
+#tags-list input[type="checkbox"]:checked {
+    background: var(--accent-main, #00f2fe);
+    border-color: var(--accent-main, #00f2fe);
+    box-shadow: 0 0 8px rgba(0, 242, 254, 0.4);
+}
+
+#tags-list input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid #0a0c10;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+#tags-list div {
+    display: flex;
+    flex-direction: column;
+}
+
+#tags-list label {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--text-body, #a0aec0);
+    font-size: 0.9rem;
+    padding: 4px 0;
+    transition: color 0.2s;
+}
+
+#tags-list label:hover {
+    color: #fff;
+}
+</style>
+
+{% endblock %}
